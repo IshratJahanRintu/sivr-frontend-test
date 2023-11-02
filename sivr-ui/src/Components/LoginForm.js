@@ -6,7 +6,6 @@ export default function LoginForm(){
         {cli:0}
     );
     const [url,setUrl]=useState('http://localhost:3000/sivr/auth?');
-const [longCode,setLongCode]=useState(0)
     const handleInputChange = (e) => {
         const {name, value} = e.target;
         setFormData({
@@ -14,15 +13,34 @@ const [longCode,setLongCode]=useState(0)
             [name]: value,
         });
     };
+    function isPhoneNumberValid(phoneNumber){
 
+        if (!/^\d+$/.test(phoneNumber)) {
+
+            return false;
+        }
+        const ValidNumberRegex = /^(?:\+?88|0088)?01\d{9}$/;
+
+        return ValidNumberRegex.test(phoneNumber);
+
+    }
 
     async function handleSubmit() {
-        console.log("phone number= +" + formData.cli);
+if (isPhoneNumberValid(formData.cli)){
+            const response = await axios.post('http://127.0.0.1:8000/api/generate-auth-link',formData);
+            setUrl('http://localhost:3000/sivr/auth?'+response.data )
 
-        const response = await axios.post('http://127.0.0.1:8000/api/generate-auth-link',formData);
-       setUrl(prevUrl =>prevUrl+response.data+formData.cli )
+            console.log(response.data);
+            console.log(formData.cli);
+        }
+else{
+    setFormData({
+        cli: 0
+    })
+    setUrl('http://localhost:3000/sivr/auth?');
+}
 
-        console.log(response.data);
+
     }
 
     return (
