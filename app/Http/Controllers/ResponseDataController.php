@@ -51,6 +51,11 @@ class ResponseDataController
         $this->message = 'Authentication Link not generated ';
         return $this->responseChannelJsonData($response, 401);
     }
-
+    public function errorLoginResponse($response)
+    {
+        $this->errorCode = 1004;
+        $this->message = 'Login Failed.';
+        return $this->responseJsonData($response, 401);
+    }
 
 }
