@@ -42,7 +42,7 @@ class ResponseDataController
     {
         $this->errorCode = 1003;
         $this->message = 'Unauthorized. User Not Found.';
-        return $this->responseJsonData($response, 200);
+        return $this->responseJsonData($response, 401);
     }
 
     public function failedAuthLinkGenerate($response)
