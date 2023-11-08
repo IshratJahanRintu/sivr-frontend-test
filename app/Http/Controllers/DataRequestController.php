@@ -6,14 +6,13 @@ use Illuminate\Http\Request;
 
 class DataRequestController extends Controller
 {
-    protected $params;
-    protected $method;
+
+
 
     public function getResponse($method, $params)
     {
-        $this->method = $method;
-        $this->params = $params;
-        $requestData = array('method' => $this->method, 'params' => $this->params);
+
+        $requestData = array('method' => $method, 'params' => $params);
         $responseData = $this->dataRequest($requestData);
         return json_decode($responseData, true);
     }
@@ -22,7 +21,7 @@ class DataRequestController extends Controller
     {
 
         $url = DATA_PROVIDER_URL;
-        $postRequest = true;
+
 
         $requestHeaders = [];
         $headers = ["cache-control: no-cache"];
@@ -35,10 +34,9 @@ class DataRequestController extends Controller
         curl_setopt($carlHandler, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($carlHandler, CURLOPT_HTTPHEADER, $headers);
 
-        if ($postRequest) {
-            curl_setopt($carlHandler, CURLOPT_POST, true);
-            curl_setopt($carlHandler, CURLOPT_POSTFIELDS, $postData);
-        }
+        curl_setopt($carlHandler, CURLOPT_POST, true);
+        curl_setopt($carlHandler, CURLOPT_POSTFIELDS, $postData);
+
 
         curl_setopt($carlHandler, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($carlHandler, CURLOPT_SSL_VERIFYPEER, false);

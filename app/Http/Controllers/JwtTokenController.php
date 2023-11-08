@@ -6,18 +6,10 @@ use Firebase\JWT\JWT;
 
 class JwtTokenController extends Controller
 {
-    private $jwtToken;
 
-    public function getJwtAuthToken($user)
-    {
-        $this->createJwtAuthToken($user);
-        return $this->jwtToken;
-    }
 
-    private function createJwtAuthToken($user)
+    public function createJwtAuthToken($user)
     {
-//        $plan = $user->getUserType();
-//        $cli = $user->getCli();
         $plan = null;
         $cli = $user['cli'];
         $key = env('JWT_SECRET');
@@ -32,10 +24,11 @@ class JwtTokenController extends Controller
             "exp" => $expireTime,
             "cli" => $cli,
             "plan" => $plan,
-//            "ivr" => $user->getIvrId(),
             "uid" => md5($cli . $plan . $createTime)
         );
-        $this->jwtToken = JWT::encode($payload,$key,'HS256');
+        return JWT::encode($payload,$key,'HS256');
     }
+
+
 
 }

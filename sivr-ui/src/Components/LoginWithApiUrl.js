@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
-import {API_URL, LOGIN_AUTH_API_URL} from "../config/Constants";
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
-
+import Cookies from 'universal-cookie';
 export default function LoginWithApiUrl() {
     const [msg, setMsg] = useState('Redirecting ...');
     const navigate = useNavigate();
+    const cookies = new Cookies();
     useEffect(() => {
         handleLogin();
-    })
+    },[])
 
-    async function handleLogin() {
+    const handleLogin=async ()=> {
 
         let search = window.location.search;
         let params = new URLSearchParams(search);
@@ -32,23 +32,20 @@ export default function LoginWithApiUrl() {
                 const response = await axios.post('http://127.0.0.1:8000/api/login/auth', data);
                 const responseData = response.data;
                 setMsg(responseData.message);
-                console.log(response);
-                console.log(cli);
 
+                cookies.set('token', responseData.data.token, {path: '/'});
+                cookies.set('key', responseData.data.key, {path: '/'});
                 navigate('/homePage');
             } catch (error) {
-                if (error.response && error.response.status === 401) {
-                    setMsg('Unauthorized');
-                } else {
-                    setMsg('Login failed');
+                if (error.response ) {
+                    setMsg(error.response.data.message);
                 }
             }
         } else {
-            console.log('invalid number');
+
             setMsg("Invalid Number");
 
         }
-
 
     }
 

@@ -17,14 +17,7 @@ class ResponseDataController
         ], $httpStatusCode);
     }
 
-    private function responseChannelJsonData($response, $httpStatusCode, $data = null)
-    {
-        return $response->json([
-           'resCode' => $this->errorCode,
-           'message' => $this->message,
-           'data' => $data
-       ], $httpStatusCode);
-    }
+
 
 
     public function successLoginResponse($response, $token, $cacheKey)
@@ -45,12 +38,7 @@ class ResponseDataController
         return $this->responseJsonData($response, 401);
     }
 
-    public function failedAuthLinkGenerate($response)
-    {
-        $this->errorCode = 1003;
-        $this->message = 'Authentication Link not generated ';
-        return $this->responseChannelJsonData($response, 401);
-    }
+
     public function errorLoginResponse($response)
     {
         $this->errorCode = 1004;

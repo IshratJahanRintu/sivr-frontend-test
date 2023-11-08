@@ -7,11 +7,7 @@ use App\Http\Controllers\JwtTokenController;
 
 class AuthController extends Controller
 {
-    /**
-     * @var DataRequestController
-     */
 
-    private $cacheKey;
     private $cache;
 
     private $dataRequestController;
@@ -23,8 +19,6 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->dataRequestController = new DataRequestController();
-        $this->dataProvider = new DataProviderController();
-        $this->dataLogger = new DataLogController();
         $this->cache = new CacheController();
         $this->responseManager = new ResponseDataController();
         $this->response = response();
@@ -52,12 +46,7 @@ class AuthController extends Controller
         $cli = $request->input('cli');
         $params = json_encode(array($authCode, $cli));
         $responseData = $this->dataRequestController->getResponse(GET_USER_FROM_AUTH_CODE_FUNCTION, $params);
-        $userData = null;
-        if ($responseData !== 0) {
-
-            $userData = reset($responseData);
-
-        }
+        $userData = $responseData !== 0 ? reset($responseData) : null;
 
         if ($userData != null) {
 
@@ -74,32 +63,32 @@ class AuthController extends Controller
         $cli = substr($userData['cli'], -10);
         $userData['session_id'] = $cli . time();
 
-        $token = $this->jwtTokenObject->getJwtAuthToken($userData);
-        $this->cacheKey = rand(100000, 999999) . $userData['session_id'];
+        $token = $this->jwtTokenObject->createJwtAuthToken($userData);
+        $cacheKey = rand(100000, 999999) . $userData['session_id'];
         if ($token != null) {
-            $this->setInitialCacheData($userData, $token);
-            return $this->responseManager->successLoginResponse($this->response, $token, $this->cacheKey);
+            $this->setInitialCacheData($userData, $token, $cacheKey);
+            return $this->responseManager->successLoginResponse($this->response, $token, $cacheKey);
         }
         return $this->responseManager->errorLoginResponse($this->response);
     }
 
 
-    public function setInitialCacheData($userData, $token)
+    public function setInitialCacheData($userData, $token,$cacheKey)
     {
-        $key = $this->cacheKey;
 
-        $this->cache->setCacheData("ivrId" . $key, $userData['ivr_id']);
-        $this->cache->setCacheData("cli" . $key, substr($userData['cli'], -10));
-        $this->cache->setCacheData("language" . $key, $userData['language']);
-        $this->cache->setCacheData("sessionId" . $key, $userData['session_id']);
-        $this->cache->setCacheData("sound" . $key, 'ON');
-        $this->cache->setCacheData("did" . $key, $userData['did']);
-        $this->cache->setCacheData("startTime" . $key, time());
-        $this->cache->setCacheData("action" . $key, DEFAULT_ACTION);
-        $this->cache->setCacheData("firstGreeting" . $key, true);
-        $this->cache->setCacheData("tokenData" . $key, $token);
-        $this->cache->setCacheData(LAST_REQUESTED_PAGE . $this->cacheKey, DEFAULT_PAGE);
-        $this->cache->setCacheData(REQUEST_COUNT . $this->cacheKey, "1");
-        $this->cache->setCacheData("requestAmount" . $this->cacheKey, "1");
+
+        $this->cache->setCacheData("ivrId" . $cacheKey, $userData['ivr_id']);
+        $this->cache->setCacheData("cli" . $cacheKey, substr($userData['cli'], -10));
+        $this->cache->setCacheData("language" . $cacheKey, $userData['language']);
+        $this->cache->setCacheData("sessionId" . $cacheKey, $userData['session_id']);
+        $this->cache->setCacheData("sound" . $cacheKey, 'ON');
+        $this->cache->setCacheData("did" . $cacheKey, $userData['did']);
+        $this->cache->setCacheData("startTime" . $cacheKey, time());
+        $this->cache->setCacheData("action" . $cacheKey, DEFAULT_ACTION);
+        $this->cache->setCacheData("firstGreeting" . $cacheKey, true);
+        $this->cache->setCacheData("tokenData" . $cacheKey, $token);
+        $this->cache->setCacheData(LAST_REQUESTED_PAGE . $cacheKey, DEFAULT_PAGE);
+        $this->cache->setCacheData(REQUEST_COUNT . $cacheKey, "1");
+        $this->cache->setCacheData("requestAmount" . $cacheKey, "1");
     }
 }
