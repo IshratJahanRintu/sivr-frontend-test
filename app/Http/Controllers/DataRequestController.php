@@ -27,23 +27,23 @@ class DataRequestController extends Controller
         $headers = ["cache-control: no-cache"];
         $headers = array_merge($headers, $requestHeaders);
 
-        $carlHandler = curl_init();
-        curl_setopt($carlHandler, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($carlHandler, CURLOPT_TIMEOUT, 15);
-        curl_setopt($carlHandler, CURLOPT_URL, $url);
-        curl_setopt($carlHandler, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($carlHandler, CURLOPT_HTTPHEADER, $headers);
+        $curlHandler = curl_init();
+        curl_setopt($curlHandler, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($curlHandler, CURLOPT_TIMEOUT, 15);
+        curl_setopt($curlHandler, CURLOPT_URL, $url);
+        curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curlHandler, CURLOPT_HTTPHEADER, $headers);
 
-        curl_setopt($carlHandler, CURLOPT_POST, true);
-        curl_setopt($carlHandler, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($curlHandler, CURLOPT_POST, true);
+        curl_setopt($curlHandler, CURLOPT_POSTFIELDS, $postData);
 
 
-        curl_setopt($carlHandler, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($carlHandler, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curlHandler, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, false);
 
-        $response = trim(curl_exec($carlHandler));
+        $response = trim(curl_exec($curlHandler));
 
-        $err = curl_error($carlHandler);
+        $err = curl_error($curlHandler);
         return !empty($err) ? null : $response;
 
     }
